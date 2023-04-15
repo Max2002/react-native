@@ -1,47 +1,48 @@
-import { View, Button, Image, Alert } from "react-native";
-import { useState } from "react";
+import { View, Button, Alert } from "react-native";
+import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
-// import { styles } from "./styles";
+// import * as Permissions from 'expo-permissions';
+import { styles } from './styles';
 
-const askPermissions = async () => {
-  const { status } = await Permissions.askAsync(
-    Permissions.CAMERA,
-    Permissions.CAMERA_ROLL,
-  );
+// const askPermissions = async () => {
+//   const { status } = await Permissions.askAsync(
+//     Permissions.CAMERA,
+//     Permissions.CAMERA_ROLL,
+//   );
+//
+//   if (status !== 'granted') {
+//     Alert.alert('Error', 'You do not allow permissions on use camera!');
+//     return false;
+//   }
+//
+//   return true;
+// };
 
-  if (status !== 'granted') {
-    Alert.alert('Error', 'You do not allow permissions on use camera!');
-    return false;
-  }
+export default function PhotoPicker({ onPicker }) {
+  const { takePhotoBtn } = styles;
+  const takePhoto = async () => {
+    // const hasPermissions = await askPermissions();
+    //
+    // if (!hasPermissions) {
+    //   return;
+    // }
 
-  return true;
-};
-
-export default function ImagePicker() {
-  const [image, setImage] = useState('');
-  const takePhoto = () => {};
-  // const { card, deleteBtn } = styles;
-  const onPress = async () => {
-    const hasPermissions = await askPermissions();
-
-    if (!hasPermissions) {
-      return;
-    }
-
-    const img = await ImagePicker.launchCameraAsync({
+    const { assets: [{ uri }] } = await ImagePicker.launchCameraAsync({
       quality: 1,
       allowsEditing: false,
       aspect: [16, 9],
     });
-
-    console.log(img);
+    onPicker(uri);
   }
 
   return (
-    <View >
-      <Button title='Take photo' onPress={takePhoto} />
-      {image && <Image source={{ uri: image }} />}
+    <View style={takePhotoBtn} >
+      <MaterialIcons
+        name="monochrome-photos"
+        size={32}
+        color="black"
+        onPress={takePhoto}
+      />
     </View>
   );
 }
